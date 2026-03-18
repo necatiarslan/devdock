@@ -8,11 +8,11 @@ import { initializeLicense, isLicenseValid, RegisterLicenseManagementCommands } 
 
 
 /**
- * Activates the AWS Workbench extension.
+ * Activates the DevDock extension.
  * This is the entry point for the extension.
  */
 export function activate(context: vscode.ExtensionContext): void {
-    ui.logToOutput('Activating AWS Workbench...');
+    ui.logToOutput('Activating DevDock...');
 
     try {
         initializeLicense(context);
@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext): void {
         session.IsProVersion = isLicenseValid();
         new ServiceHub(context);    // Initialize service hub
         
-        // 1. Initialize the Unified "Aws Workbench" Tree Provider
+		// 1. Initialize the unified DevDock tree provider
         new TreeView(context);
 
         // 2. Load saved tree state after TreeView is initialized
@@ -33,10 +33,10 @@ export function activate(context: vscode.ExtensionContext): void {
 		RegisterLicenseManagementCommands();
 		
 
-        ui.logToOutput('AWS Workbench activated successfully.');
+        ui.logToOutput('DevDock activated successfully.');
     } catch (error) {
-        ui.logToOutput('Fatal error activating AWS Workbench:', error as Error);
-        ui.showInfoMessage('AWS Workbench failed to activate. Check debug console for details.');
+        ui.logToOutput('Fatal error activating DevDock:', error as Error);
+        ui.showInfoMessage('DevDock failed to activate. Check debug console for details.');
     }
 }
 

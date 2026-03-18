@@ -1,7 +1,7 @@
 {
   "name": "devdock",
   "displayName": "DevDock",
-  "description": "Your complete AWS toolkit, right in VS Code",
+  "description": "A customizable developer dock for files, notes, scripts, and VS Code commands",
   "version": "1.0.0",
   "publisher": "NecatiARSLAN",
   "repository": {
@@ -16,15 +16,12 @@
     "Other"
   ],
   "keywords": [
-    "AWS",
-    "S3",
-    "Lambda",
-    "Step Functions",
-    "DynamoDB",
-    "IAM",
-    "CloudWatch",
-    "SNS",
-    "SQS"
+    "developer",
+    "productivity",
+    "notes",
+    "scripts",
+    "files",
+    "commands"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
@@ -77,14 +74,6 @@
         "command": "DevDock.RemoveFav",
         "title": "UnFav",
         "icon": "$(star-empty)"
-      },
-      {
-        "command": "DevDock.ShowOnlyInThisProfile",
-        "title": "Show Only In This Profile"
-      },
-      {
-        "command": "DevDock.ShowInAnyProfile",
-        "title": "Show In Any Profile"
       },
       {
         "command": "DevDock.ShowOnlyInThisWorkspace",
@@ -170,30 +159,6 @@
         "icon": "$(folder)"
       },
       {
-        "command": "DevDock.SelectAwsProfile",
-        "title": "Select AWS Profile",
-        "icon": "$(account)"
-      },
-      {
-        "command": "DevDock.SetAwsRegion",
-        "title": "Set AWS Region",
-        "icon": "$(location)"
-      },
-      {
-        "command": "DevDock.UpdateAwsEndPoint",
-        "title": "Update AWS EndPoint"
-      },
-      {
-        "command": "DevDock.TestAwsConnection",
-        "title": "Test AWS Connection",
-        "icon": "$(plug)"
-      },
-      {
-        "command": "DevDock.RefreshCredentials",
-        "title": "Refresh AWS Credentials",
-        "icon": "$(refresh)"
-      },
-      {
         "command": "DevDock.Donate",
         "title": "Donate",
         "icon": "$(heart)"
@@ -228,10 +193,6 @@
     ],
     "submenus": [
       {
-        "id": "DevDock.Connection",
-        "label": "Connection"
-      },
-      {
         "id": "DevDock.ProLicense",
         "label": "Pro License"
       }
@@ -259,44 +220,34 @@
           "group": "navigation"
         },
         {
-          "command": "DevDock.SelectAwsProfile",
-          "when": "view == DevDockView",
-          "group": "navigation"
-        },
-        {
           "command": "DevDock.Refresh",
           "when": "view == DevDockView",
           "group": "navigation"
         },
         {
-          "submenu": "DevDock.Connection",
+          "submenu": "DevDock.ProLicense",
           "when": "view == DevDockView",
           "group": "other_1"
         },
         {
-          "submenu": "DevDock.ProLicense",
+          "command": "DevDock.Donate",
           "when": "view == DevDockView",
           "group": "other_2"
         },
         {
-          "command": "DevDock.Donate",
-          "when": "view == DevDockView",
-          "group": "other_3"
-        },
-        {
           "command": "DevDock.BugAndNewFeatureRequest",
           "when": "view == DevDockView",
-          "group": "other_3"
+          "group": "other_2"
         },
         {
           "command": "DevDock.ExportConfig",
           "when": "view == DevDockView",
-          "group": "other_4"
+          "group": "other_3"
         },
         {
           "command": "DevDock.ImportConfig",
           "when": "view == DevDockView",
-          "group": "other_4"
+          "group": "other_3"
         }
       ],
       "view/item/context": [
@@ -321,16 +272,6 @@
           "group": "Filter"
         },
         {
-          "command": "DevDock.ShowOnlyInThisProfile",
-          "when": "view == DevDockView && viewItem =~ /#ShowOnlyInThisProfile#/",
-          "group": "Filter"
-        },
-        {
-          "command": "DevDock.ShowInAnyProfile",
-          "when": "view == DevDockView && viewItem =~ /#ShowInAnyProfile#/",
-          "group": "Filter"
-        },
-        {
           "command": "DevDock.ShowOnlyInThisWorkspace",
           "when": "view == DevDockView && viewItem =~ /#ShowOnlyInThisWorkspace#/",
           "group": "Filter"
@@ -338,11 +279,6 @@
         {
           "command": "DevDock.ShowInAnyWorkspace",
           "when": "view == DevDockView && viewItem =~ /#ShowInAnyWorkspace#/",
-          "group": "Filter"
-        },
-        {
-          "command": "DevDock.ShowInAnyProfile",
-          "when": "view == DevDockView && viewItem =~ /#ShowInAnyProfile#/",
           "group": "Filter"
         },
         {
@@ -421,24 +357,6 @@
           "group": "inline@10"
         }
       ],
-      "DevDock.Connection": [
-        {
-          "command": "DevDock.TestAwsConnection",
-          "group": "1_connection"
-        },
-        {
-          "command": "DevDock.RefreshCredentials",
-          "group": "1_connection"
-        },
-        {
-          "command": "DevDock.UpdateAwsEndPoint",
-          "group": "2_settings"
-        },
-        {
-          "command": "DevDock.SetAwsRegion",
-          "group": "2_settings"
-        }
-      ],
       "DevDock.ProLicense": [
         {
           "command": "DevDock.EnterLicenseKey",
@@ -458,8 +376,8 @@
       "activitybar": [
         {
           "id": "DevDock",
-          "title": "Aws Workbench",
-          "icon": "media/aws-workbench-logo-activitybar.svg"
+          "title": "DevDock",
+          "icon": "media/devdock-logo-activitybar.png"
         }
       ]
     },
@@ -467,75 +385,17 @@
       "DevDock": [
         {
           "id": "DevDockView",
-          "name": "Aws Workbench",
-          "icon": "media/aws-workbench-logo-activitybar.svg"
+          "name": "DevDock",
+          "icon": "media/devdock-logo-activitybar.png"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "DevDockView",
-        "contents": "Please click [+] to add Aws Resources. \n [Add](command:DevDock.Add) \n\n\n\n To Access Aws, you need to configure local Aws Credentials. \n For more detail on Aws Credentials, see the [AWS CLI Credentials Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). \n For a video guide, see this [YouTube Tutorial on AWS Credentials](https://www.youtube.com/watch?v=SON8sY1iOBU). \n\n [Test Aws Connection](command:DevDock.TestAwsConnection) \n\n [Update Aws EndPoint](command:DevDock.UpdateAwsEndPoint)"
+        "contents": "Click [+] to add items to your dock.\n [Add](command:DevDock.Add)\n\nPin files, create notes, save shell snippets, and keep VS Code commands close at hand."
       }
-    ],
-    "icons": {
-      "s3-bucket": {
-        "description": "AWS Contributed Icon",
-        "default": {
-          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-          "fontCharacter": "\\f1db"
-        }
-      },
-      "cloudwatch-loggroup": {
-        "description": "AWS Contributed Icon",
-        "default": {
-          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-          "fontCharacter": "\\f1c4"
-        }
-      },
-      "cloudwatch-logstream": {
-        "description": "AWS Contributed Icon",
-        "default": {
-          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-          "fontCharacter": "\\eb85"
-        }
-      },
-      "lambda-function": {
-        "description": "AWS Contributed Icon",
-        "default": {
-          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-          "fontCharacter": "\\f1d1"
-        }
-      },
-      "step-functions": {
-        "description": "AWS Contributed Icon",
-        "default": {
-          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-          "fontCharacter": "\\f1e1"
-        }
-      },
-      "glue-job": {
-        "description": "AWS Glue Job Icon",
-        "default": {
-          "fontPath": "./node_modules/@vscode/codicons/dist/codicon.ttf",
-          "fontCharacter": "\\eb8e"
-        }
-      },
-      "dynamodb-table": {
-        "description": "AWS DynamoDB Table Icon",
-        "default": {
-          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-          "fontCharacter": "\\f1cc"
-        }
-      },
-      "sqs-queue": {
-        "description": "AWS SQS Queue Icon",
-        "default": {
-          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-          "fontCharacter": "\\eb9c"
-        }
-      }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -562,23 +422,6 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@aws-sdk/client-cloudwatch-logs": "^3.1009.0",
-    "@aws-sdk/client-dynamodb": "^3.1009.0",
-    "@aws-sdk/client-emr": "^3.1009.0",
-    "@aws-sdk/client-emr-serverless": "^3.1009.0",
-    "@aws-sdk/client-glue": "^3.1009.0",
-    "@aws-sdk/client-iam": "^3.1009.0",
-    "@aws-sdk/client-lambda": "^3.1009.0",
-    "@aws-sdk/client-s3": "^3.1009.0",
-    "@aws-sdk/client-sfn": "^3.1009.0",
-    "@aws-sdk/client-sns": "^3.1009.0",
-    "@aws-sdk/client-sqs": "^3.1009.0",
-    "@aws-sdk/client-sts": "^3.1009.0",
-    "@aws-sdk/credential-provider-ini": "^3.972.20",
-    "@aws-sdk/credential-provider-node": "^3.972.21",
-    "@aws-sdk/credential-providers": "^3.1009.0",
-    "@aws-sdk/types": "^3.973.6",
-    "@tshepomgaga/aws-sfn-graph": "^0.0.6",
     "@types/uuid": "^11.0.0",
     "@vscode-elements/elements": "^2.5.1",
     "@vscode/codicons": "^0.0.45",

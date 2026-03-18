@@ -17,8 +17,8 @@ export interface LicenseStatus {
 }
 
 // Storage keys
-const LICENSE_KEY_SECRET = 'aws-workbench.licenseKey';
-const LICENSE_STATUS_KEY = 'aws-workbench.licenseStatus';
+const LICENSE_KEY_SECRET = 'devdock.licenseKey';
+const LICENSE_STATUS_KEY = 'devdock.licenseStatus';
 
 // API endpoint
 const LICENSE_API_URL = 'https://www.sairefe.com/wp-json/vscode/v1/license/validate';
@@ -27,7 +27,7 @@ const LICENSE_API_URL = 'https://www.sairefe.com/wp-json/vscode/v1/license/valid
 const VALIDATION_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
 const GRACE_PERIOD_DAYS = 7;
 
-const PRODUCT_NAME = 'Aws Workbench';
+const PRODUCT_NAME = 'DevDock';
 const PRODUCT_ID = 807044;
 const PRODUCT_ID_QA = 807040;
 

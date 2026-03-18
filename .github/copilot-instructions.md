@@ -1,124 +1,163 @@
-# AWS Workbench Copilot Instructions
+# DevDock Copilot Instructions
 
 ## Project Overview
-AWS Workbench is a VS Code extension providing unified management of AWS resources (S3, Lambda, DynamoDB, Step Functions, Glue, SQS, SNS, IAM, CloudWatch Logs) through a tree view sidebar. Built with TypeScript/Node.js using the VS Code Extension API.
+DevDock is a VS Code extension that provides a personal dock in the sidebar for organizing developer shortcuts. It is built with TypeScript/Node.js on the VS Code Extension API.
 
-**Key Architecture**: Unified tree provider → Service layer (per-service) → API clients → AWS SDK v3
+Current feature set:
+- folders for grouping items
+- rich-text notes
+- file links
+- bash scripts
+- bash file shortcuts
+- VS Code command shortcuts
+
+The extension no longer contains AWS service integrations. Any guidance that assumes AWS resources, credentials, SDK clients, or service-specific node trees is stale and should not be reintroduced unless explicitly requested.
+
+**Key Architecture**: Extension activation -> session/bootstrap -> unified tree view -> node/event model -> persisted tree state
 
 ---
 
 ## Critical Architecture Patterns
 
 ### 1. Service Layer Pattern
-Each AWS service follows identical structure:
-- **ServiceBase** abstract class in [src/tree/ServiceBase.ts](src/tree/ServiceBase.ts) - defines `Add()` interface
-- Each service (`LambdaService`, `S3Service`, `DynamoDBService`, etc.) extends `ServiceBase`:
-  - Singleton pattern: `public static Current: ServiceName`
-  - Instantiated in [src/tree/ServiceHub.ts](src/tree/ServiceHub.ts) during extension activation
-  - Implements `async Add()` to handle user resource selection workflows
-  - Uses `ui.logToOutput()` for debugging
+Services are now minimal and generic.
 
-**Example flow**: User clicks "Add" → `ServiceHub.Current.S3Service.Add()` → shows region input → queries AWS → creates S3BucketNode children
+- **ServiceBase** lives in [../src/tree/ServiceBase.ts](../src/tree/ServiceBase.ts) and provides `TreeSave()`.
+- **ServiceHub** in [../src/tree/ServiceHub.ts](../src/tree/ServiceHub.ts) wires the active services during activation.
+- Active services are:
+  - `FileSystemService` for folders, notes, file links, bash scripts, and bash files
+  - `VscodeService` for saved VS Code commands
+
+**Example flow**: User clicks Add -> [../src/tree/TreeView.ts](../src/tree/TreeView.ts) shows supported item types -> delegates to `ServiceHub.Current.FileSystemService.Add(...)` or `ServiceHub.Current.VscodeService.Add(...)`.
 
 ### 2. Node Tree Hierarchy
-All tree items extend [NodeBase](src/tree/NodeBase.ts) (which extends `vscode.TreeItem`):
-- **Root nodes**: Direct children of tree (e.g., `S3BucketNode`, `LambdaFunctionNode`)
-- **Parent-child relationships**: Nodes maintain `Parent` and `Children[]` arrays; parent inherits `AwsProfile`, `Workspace`, visibility flags
-- **Event emitters**: Each node has `OnNodeAdd`, `OnNodeRemove`, `OnNodeRefresh`, etc. - subscribe in constructor to handle operations
-- **@Serialize() decorator**: Only marked properties persist to VS Code `globalState` (see [Serialize.ts](src/common/serialization/Serialize.ts))
+All dock items extend [../src/tree/NodeBase.ts](../src/tree/NodeBase.ts), which extends `vscode.TreeItem`.
 
-**Example node structure**:
-```
-LambdaFunctionNode (FunctionName)
-├─ LambdaInfoGroupNode
-├─ LambdaCodeGroupNode
-│  ├─ LambdaCodeFileNode
-│  ├─ LambdaCodeDownloadNode
-│  └─ LambdaCodeUpdateNode
-├─ LambdaEnvGroupNode
-└─ LambdaLogGroupNode
-```
+- Root nodes are stored in `NodeBase.RootNodes`
+- Nodes maintain `Parent` and `Children[]`
+- Nodes expose event emitters such as `OnNodeAdd`, `OnNodeEdit`, `OnNodeRun`, and `OnNodeRemove`
+- Subclasses subscribe to those events in their constructors
+- Serializable state is marked with `@Serialize()` and restored through `NodeRegistry`
 
-### 3. API Layer Pattern
-Each service has `API.ts` containing:
-- AWS SDK client factory functions: `GetS3Client()`, `GetLambdaClient()`, etc.
-  - All accept `region: string`, fetch credentials from `Session.Current.GetCredentials()`
-  - Support custom AWS endpoint via `Session.Current.AwsEndPoint`
-- API functions return `MethodResult<T>` (generic wrapper with `result`, `isSuccessful`, `error`)
-- Consistent error handling: catch blocks call `ui.showErrorMessage()` AND `ui.logToOutput()`
+Common current node types:
+- `FolderNode`
+- `NoteNode`
+- `FileNode`
+- `BashScriptNode`
+- `BashFileNode`
+- `CommandNode`
 
-**Example**: [src/step-functions/API.ts#L25](src/step-functions/API.ts#L25)
+### 3. Persistence Pattern
+The dock tree is persisted to VS Code `globalState`.
+
+- [../src/tree/TreeState.ts](../src/tree/TreeState.ts) handles save/load with a debounce
+- [../src/common/serialization/TreeSerializer.ts](../src/common/serialization/TreeSerializer.ts) serializes only `@Serialize()` properties
+- [../src/common/serialization/NodeRegistry.ts](../src/common/serialization/NodeRegistry.ts) maps saved type names back to node constructors
+
+**On activation** in [../src/extension.ts](../src/extension.ts):
+1. Initialize `Session`
+2. Initialize `ServiceHub`
+3. Create `TreeView`
+4. Load saved tree state
+5. Refresh the tree
 
 ### 4. Webview Pattern
-Interactive data views (queries, editing, logs) use WebviewPanels:
-- Constructor takes `vscode.WebviewPanel` + data params
-- Static factory method: `public static async show(...)` creates panel, instantiates view, handles messages
-- HTML/CSS/JS in `media/<service>/` folders
-- Message passing: `panel.webview.postMessage()` ↔ `panel.webview.onDidReceiveMessage()`
+The main interactive webview currently is the note editor.
 
-**Examples**: [CloudWatchLogView](src/cloudwatch-logs/CloudWatchLogView.ts), [DynamoDBQueryView](src/dynamodb/DynamoDBQueryView.ts)
+- [../src/filesystem/NoteView.ts](../src/filesystem/NoteView.ts) creates and manages a `WebviewPanel`
+- Styles are loaded from [../media/notes/style.css](../media/notes/style.css)
+- The editor uses Quill via CDN and persists changes by posting messages back to the extension
 
----
-
-## State Management & Persistence
-
-### Tree State (Node Structure)
-- [TreeState.ts](src/tree/TreeState.ts): Debounced save/load of entire tree to VS Code `globalState`
-- Triggered by node changes via `TreeState.save()` (500ms debounce) or `TreeState.saveImmediate()` on deactivation
-- Uses [TreeSerializer](src/common/serialization/TreeSerializer.ts) with `@Serialize()` decorator to selectively persist properties
-- Deserialization uses `NodeRegistry` to recreate correct node types from JSON
-
-**On Extension Activate** (see [extension.ts](src/extension.ts#L18)):
-1. Initialize `Session` (AWS credentials/profile)
-2. Initialize `ServiceHub` (all service instances)
-3. Create `TreeView` (registers commands, creates tree provider)
-4. `TreeState.load()` deserializes saved nodes
-5. `TreeView.Current.Refresh()` renders tree
+When adding new webviews:
+- keep message passing explicit and minimal
+- use `ui.getUri(...)` for local assets
+- prefer small focused views over complex multi-purpose panels
 
 ---
 
-## Build, Test & Development
+## State Management
 
-### Build & Watch
+### Session State
+[../src/common/Session.ts](../src/common/Session.ts) now stores generic UI state only:
+- filter string
+- show-only-favorites toggle
+- show-hidden toggle
+- extension URI and host metadata
+- Pro license flag
+
+Do not add AWS profile, region, endpoint, or credential logic back into `Session` unless the product scope changes deliberately.
+
+### Tree Visibility Rules
+Visibility is computed in [../src/tree/NodeBase.ts](../src/tree/NodeBase.ts) based on:
+- favorite filter
+- hidden filter
+- workspace scoping
+- free-text filter string
+
+Nodes can also be scoped to the current workspace with the existing workspace context actions.
+
+---
+
+## Build, Test, and Development
+
+### Build Commands
 ```bash
-npm run compile      # TypeScript → JavaScript in ./out/
-npm run watch        # tsc -watch -p ./
+npm install
+npm run compile
+npm run watch
+npm run lint
 ```
-VS Code automatically reloads extension on file changes during `npm run watch` in debug mode.
+
+### TypeScript Scope
+The build intentionally includes only the active DevDock code:
+- `src/common/**`
+- `src/filesystem/**`
+- `src/tree/**`
+- `src/vscode/**`
+- `src/extension.ts`
+
+If new features are added, update [../tsconfig.json](../tsconfig.json) intentionally rather than broadening the build by accident.
 
 ### Debugging
-- Press F5 in VS Code to launch extension in debug window
-- Set breakpoints, use Debug Console
-- Output goes to "Debug Console" tab and `ui.logToOutput()` populates "Aws Workbench" output channel
-
-### Commands Registration
-- All commands registered in [TreeView.RegisterCommands()](src/tree/TreeView.ts#L24)
-- Commands defined in `package.json` under `contributes.commands`
-- Context menu visibility controlled by `viewItem` regex patterns (e.g., `viewItem =~ /#NodeAdd#/`)
+- Press F5 in VS Code to launch the extension in a debug window
+- Logs go through `ui.logToOutput()` into DevDock output channels
+- Tree behavior is easiest to inspect by following command registration in [../src/tree/TreeView.ts](../src/tree/TreeView.ts)
 
 ---
 
-## Key Conventions & Patterns
+## Key Conventions
 
-### Error Handling
-- **Always use `MethodResult<T>`** for API returns (not throw exceptions)
-- Display errors: `ui.showErrorMessage("Context", error)` + `ui.logToOutput()`
-- Check `result.isSuccessful` before accessing `result.result`
+### Node Actions
+Node actions are driven by event subscriptions, not deep inheritance overrides.
 
-### Node Context Values
-- Set via `this.contextValue = "..."` containing `#ActionName#` flags
-- Controls which context menu items appear (package.json menus with `viewItem =~ /pattern/`)
-- Example: `contextValue = "#NodeAdd##NodeRemove##NodeRefresh#"` enables Add/Remove/Refresh
+- Subscribe in the constructor
+- Set icon, labels, and serializable properties there
+- Call `this.SetContextValue()` after wiring supported actions
+- Persist via `this.TreeSave()` after mutating serialized state
+
+### Context Menu Visibility
+Context menu actions are controlled by `contextValue` flags assembled in [../src/tree/NodeBase.ts](../src/tree/NodeBase.ts).
+
+Examples:
+- `#NodeAdd#`
+- `#NodeEdit#`
+- `#NodeRun#`
+- `#SetTooltip#`
+- `#ShowOnlyInThisWorkspace#`
+
+If a new action should appear in the tree UI, update both:
+- node `contextValue` generation
+- `package.json` menu contributions
 
 ### Tree Refresh
-- Call `this.RefreshTree()` after node state changes
-- TreeProvider observes `TreeProvider._onDidChangeTreeData` to re-render affected nodes
-- Debounced `TreeState.save()` automatically called
+- Use `this.RefreshTree()` after node changes
+- Use `TreeState.save()` for persisted changes
+- Use `TreeView.Current.Refresh()` for top-level UI refresh flows
 
-### AWS Credentials & Sessions
-- [Session](src/common/Session.ts) singleton manages AWS profile, region, endpoint
-- Accessed as `Session.Current.AwsProfile`, `Session.Current.AwsRegion`
-- Credentials loaded via `Session.Current.GetCredentials()` from local `~/.aws/credentials`
+### File and Note UX
+- Notes are edited in the webview, not inline
+- File and bash-file nodes should store absolute file paths
+- VS Code command nodes should validate command IDs before saving
 
 ---
 
@@ -126,20 +165,46 @@ VS Code automatically reloads extension on file changes during `npm run watch` i
 
 | Directory | Purpose |
 |-----------|---------|
-| `src/tree/` | Core: TreeView, TreeProvider, NodeBase, ServiceBase, TreeState, ServiceHub |
-| `src/common/` | Shared: Session, UI, EventEmitter, MethodResult, serialization |
-| `src/<service>/` | Service-specific: API.ts, Service.ts, Node classes (e.g., LambdaFunctionNode) |
-| `media/<service>/` | Webview HTML/CSS/JS for interactive views |
-| `src/aws-sdk/` | AWS credentials file parsing (AWS SDK helpers) |
+| `src/tree/` | Tree UI, providers, node base, service hub, persistence |
+| `src/common/` | Shared session, UI helpers, license, serialization, event emitter |
+| `src/filesystem/` | Folder, note, file-link, bash-related nodes and services |
+| `src/vscode/` | VS Code command service and node |
+| `media/notes/` | Note webview styling |
+| `media/` | Extension icons |
 
 ---
 
 ## Common Tasks
 
-**Adding a new tree node type**: Extend `NodeBase`, mark properties with `@Serialize()`, override `LoadDefaultChildren()`, attach event handlers in constructor.
+**Adding a new dock node type**
+- Extend `NodeBase`
+- Mark persisted properties with `@Serialize()`
+- Subscribe to supported node events in the constructor
+- Register the class in `NodeRegistry`
+- Add the type to the add flow in [../src/tree/TreeView.ts](../src/tree/TreeView.ts)
 
-**Integrating new AWS service**: Create service folder, implement `API.ts` (AWS SDK calls returning `MethodResult`), create `Service.ts` extending `ServiceBase`, add to `ServiceHub`, create node classes, register in `NodeRegistry`.
+**Adding a new item type to the Add menu**
+- Update the quick-pick list in [../src/tree/TreeView.ts](../src/tree/TreeView.ts)
+- Delegate creation to the appropriate service
+- Ensure the node type participates in serialization if it should persist
 
-**Creating interactive view**: Extend webview pattern from DynamoDBQueryView/CloudWatchLogView - create TypeScript class with static `show()` factory, message handlers, and corresponding HTML in `media/`.
+**Changing what appears in the tree context menu**
+- Update `SetContextValue()` in [../src/tree/NodeBase.ts](../src/tree/NodeBase.ts)
+- Update `contributes.menus` in [../package.json](../package.json)
 
-**Adding command**: Register in `TreeView.RegisterCommands()`, define in `package.json`, implement handler logic, set appropriate node `contextValue` flags.
+**Working on notes**
+- Keep persistence in the extension host through `TreeState.save()`
+- Keep editor rendering concerns in [../src/filesystem/NoteView.ts](../src/filesystem/NoteView.ts)
+
+**Working on branding**
+- Packaged extension icon: [../media/devdock-logo-extension.png](../media/devdock-logo-extension.png)
+- Activity bar icon: [../media/devdock-logo-activitybar.svg](../media/devdock-logo-activitybar.svg)
+
+---
+
+## Guardrails
+
+- Do not reintroduce AWS-specific dependencies, docs, commands, or architecture unless explicitly requested
+- Keep changes aligned with the current DevDock scope
+- Prefer small, focused node/service additions over reviving the old service-heavy structure
+- Preserve serialization compatibility for existing dock items whenever practical

@@ -38,7 +38,6 @@ export abstract class NodeBase extends vscode.TreeItem {
             this.Parent.Children.push(this);
             this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
             //inherit properties from parent
-            this.AwsProfile = this.Parent.AwsProfile;
             this.Workspace = this.Parent.Workspace;
             this.IsHidden = this.Parent.IsHidden;
             this.IsFavorite = this.Parent.IsFavorite;
@@ -66,9 +65,6 @@ export abstract class NodeBase extends vscode.TreeItem {
     private _icon: string = "";
 
     @Serialize()
-    private _awsProfile: string = "";
-
-    @Serialize()
     private _workspace: string = "";
 
     @Serialize()
@@ -80,18 +76,6 @@ export abstract class NodeBase extends vscode.TreeItem {
     public IsVisible: boolean = true;
 
     public IsWorking: boolean = false;
-
-    public IsAwsResourceNode: boolean = false;
-
-    public GetAwsResourceNode(): NodeBase | undefined {
-        if (this.IsAwsResourceNode) {
-            return this;
-        } else if (this.Parent) {
-            return this.Parent.GetAwsResourceNode();
-        } else {
-            return undefined;
-        }
-    }
 
     public StartWorking(): void {
         this.IsWorking = true;  
@@ -117,9 +101,6 @@ export abstract class NodeBase extends vscode.TreeItem {
         if (!Session.Current.IsShowHiddenNodes && this.IsHidden) {
             result = false;
         }
-        if(!Session.Current.IsShowHiddenNodes && this.AwsProfile.length > 0 && this.AwsProfile !== Session.Current.AwsProfile) {
-            result = false;
-        }
         if(!Session.Current.IsShowHiddenNodes && this.Workspace.length > 0 && this.Workspace !== vscode.workspace.name) {
             result = false;
         }
@@ -137,22 +118,6 @@ export abstract class NodeBase extends vscode.TreeItem {
         }
         if (this.IsVisible && this.Parent) {
             this.Parent.IsVisible = true;
-        }
-    }
-
-    public get AwsProfile(): string {
-        return this._awsProfile;
-    }
-
-    public set AwsProfile(value: string) {
-        this._awsProfile = value;
-        this.SetContextValue();
-        for (const child of this.Children) {
-            child.AwsProfile = value;
-        }
-        if (value === "" && this.Parent) {
-            this.Parent._awsProfile = value;
-            this.Parent.SetContextValue();
         }
     }
 
@@ -213,9 +178,6 @@ export abstract class NodeBase extends vscode.TreeItem {
             
             if (this.IsHidden) { context += "#UnHide#"; }
             else { context += "#Hide#"; }
-
-            if (this.AwsProfile.length > 0) { context += "#ShowInAnyProfile#"; }
-            else { context += "#ShowOnlyInThisProfile#"; }
 
             if (this.Workspace.length > 0) { context += "#ShowInAnyWorkspace#"; }
             else { context += "#ShowOnlyInThisWorkspace#"; }

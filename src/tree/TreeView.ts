@@ -41,26 +41,6 @@ export class TreeView {
             this.ShowHidden();
         });
 
-        vscode.commands.registerCommand('DevDock.SelectAwsProfile', () => {
-            this.SelectAwsProfile();
-        });
-
-        vscode.commands.registerCommand('DevDock.TestAwsConnection', () => {
-            this.TestAwsConnection();
-        });
-
-        vscode.commands.registerCommand('DevDock.RefreshCredentials', () => {
-            this.RefreshCredentials();
-        });
-
-        vscode.commands.registerCommand('DevDock.SetAwsRegion', () => {
-            this.SetAwsRegion();
-        });
-
-        vscode.commands.registerCommand('DevDock.UpdateAwsEndPoint', () => {
-            this.UpdateAwsEndPoint();
-        });
-
         vscode.commands.registerCommand('DevDock.Hide', (node: NodeBase) => {
             this.Hide(node);
         });
@@ -75,14 +55,6 @@ export class TreeView {
 
         vscode.commands.registerCommand('DevDock.RemoveFav', (node: NodeBase) => {
             this.RemoveFav(node);
-        });
-
-        vscode.commands.registerCommand('DevDock.ShowOnlyInThisProfile', (node: NodeBase) => {
-            this.ShowOnlyInThisProfile(node);
-        });
-
-        vscode.commands.registerCommand('DevDock.ShowInAnyProfile', (node: NodeBase) => {
-            this.ShowInAnyProfile(node);
         });
 
         vscode.commands.registerCommand('DevDock.ShowOnlyInThisWorkspace', (node: NodeBase) => {
@@ -186,15 +158,10 @@ export class TreeView {
         const visibleNodeCount = NodeBase.RootNodes.filter(node => node.IsVisible).length;
 		if (visibleNodeCount > 0) {
 			this.view.message = 
-				await this.GetFilterProfilePrompt()
-				+ this.GetBoolenSign(Session.Current.IsShowOnlyFavorite) + "Fav, " 
+                this.GetBoolenSign(Session.Current.IsShowOnlyFavorite) + "Fav, " 
 				+ this.GetBoolenSign(Session.Current.IsShowHiddenNodes) + "Hidden, "
 				+ (Session.Current.FilterString ? `Filter: ${Session.Current.FilterString}` : "");
 		}
-	}
-
-	async GetFilterProfilePrompt() {
-		return "Profile:" + Session.Current.AwsProfile + " ";
 	}
 
     private IsUnrestrictedFreeNodeType(nodeType: string): boolean {
@@ -248,17 +215,7 @@ export class TreeView {
         result.push("File Link");
         result.push("Bash Script");
         result.push("Bash File");
-        result.push("S3 Bucket");
-        result.push("CloudWatch Log Group");
-        result.push("Lambda Function");
-        result.push("Step Function");
-        result.push("Glue Job");
-        result.push("DynamoDB Table");
-        result.push("Sns Topic");
-        result.push("Sqs Queue");
-        result.push("IAM Role");
-        result.push("IAM Policy");
-        result.push("Vscode Command");
+        result.push("VS Code Command");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
         if(!nodeType){ return; }
@@ -280,38 +237,8 @@ export class TreeView {
             case "Bash File":
                 await ServiceHub.Current.FileSystemService.Add(node, "Bash File");
                 break;
-            case "S3 Bucket":
-                await ServiceHub.Current.S3Service.Add(node);
-                break;
-            case "CloudWatch Log Group":
-                await ServiceHub.Current.CloudWatchLogService.Add(node);
-                break;
-            case "Lambda Function":
-                await ServiceHub.Current.LambdaService.Add(node);
-                break;
-            case "Step Function":
-                await ServiceHub.Current.StepFunctionsService.Add(node);
-                break;
-            case "Glue Job":
-                await ServiceHub.Current.GlueService.Add(node);
-                break;
-            case "DynamoDB Table":
-                await ServiceHub.Current.DynamoDBService.Add(node);
-                break;
-            case "Sns Topic":
-                await ServiceHub.Current.SNSService.Add(node);
-                break;
-            case "Sqs Queue":
-                await ServiceHub.Current.SQSService.Add(node);
-                break;
-            case "Vscode Command":
+            case "VS Code Command":
                 await ServiceHub.Current.VscodeService.Add(node, "Command");
-                break;
-            case "IAM Role":
-                await ServiceHub.Current.IamService.AddRole(node);
-                break;
-            case "IAM Policy":
-                await ServiceHub.Current.IamService.AddPolicy(node);
                 break;
         }
         TreeState.save();
@@ -352,31 +279,6 @@ export class TreeView {
         this.Refresh();
     }
 
-    public async SelectAwsProfile(): Promise<void> {
-        await Session.Current.SetAwsProfile();
-        NodeBase.RootNodes.forEach(node => {
-            node.SetVisible();
-        });
-        this.Refresh();
-    }
-
-    public TestAwsConnection(): void {
-        Session.Current.TestAwsConnection();
-    }
-
-    public RefreshCredentials(): void {
-        Session.Current.RefreshCredentials();
-        ui.showInfoMessage("AWS credentials refreshed.");
-    }
-
-    public SetAwsRegion(): void {
-        Session.Current.SetAwsRegion();
-    }
-
-    public UpdateAwsEndPoint(): void {
-        Session.Current.SetAwsEndpoint();
-    }
-
     public Hide(node: NodeBase): void {
         node.IsHidden = true;
         node.SetVisible();
@@ -402,20 +304,6 @@ export class TreeView {
         node.IsFavorite = false;
         node.SetVisible();
         this.Refresh(node);
-        TreeState.save();
-    }
-
-    public ShowOnlyInThisProfile(node: NodeBase): void {
-        node.AwsProfile = Session.Current.AwsProfile;
-        node.SetContextValue();
-        this.treeDataProvider.Refresh(node);
-        TreeState.save();
-    }
-
-    public ShowInAnyProfile(node: NodeBase): void {
-        node.AwsProfile = "";
-        node.SetContextValue();
-        this.treeDataProvider.Refresh(node);
         TreeState.save();
     }
 
@@ -534,7 +422,7 @@ export class TreeView {
     }
 
 	public BugAndNewFeatureRequest(): void {
-		vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));
+        vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/devdock/issues/new'));
 	}
 	public Donate(): void {
 		vscode.env.openExternal(vscode.Uri.parse('https://github.com/sponsors/necatiarslan'));
@@ -542,7 +430,7 @@ export class TreeView {
 
     public async ExportConfig(): Promise<void> {
         const filePath = await vscode.window.showSaveDialog({
-            defaultUri: vscode.Uri.file('aws-workbench.json'),
+            defaultUri: vscode.Uri.file('devdock.json'),
             saveLabel: 'Save',
             filters: {'JSON': ['json']},
         });
@@ -555,7 +443,7 @@ export class TreeView {
             canSelectMany: false,
             canSelectFiles: true,
             canSelectFolders: false,
-            defaultUri: vscode.Uri.file('aws-workbench.json'),
+            defaultUri: vscode.Uri.file('devdock.json'),
             filters: {'JSON': ['json']},
         });
         if (!filePath) { return; }

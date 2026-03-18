@@ -48,39 +48,3 @@ npm-install:
 npm_rebuild:
     rm -rf node_modules
     npm install
-
-localstack_start:
-    localstack start
-
-localstack_stop:
-    localstack stop
-
-localstack_status:
-    localstack status
-
-localstack_logs:
-    localstack logs
-
-localstack_help:
-    localstack --help 
-
-localstack_update:
-    localstack update
-
-create_bucket:
-    aws --endpoint-url=http://localhost:4566 s3 mb s3://my-bucket
-
-list_buckets:
-    aws --endpoint-url=http://localhost:4566 s3 ls
-
-list_bucket_content:
-    aws --endpoint-url=http://localhost:4566 s3 ls s3://my-bucket
-
-upload_file:
-    aws --endpoint-url=http://localhost:4566 s3 cp README.md s3://my-bucket
-
-create_emr:
-    aws --endpoint-url=http://localhost:4566 emr create-cluster --name "Test cluster" --release-label emr-5.30.0 --applications Name=Hadoop Name=Spark --ec2-attributes KeyName=myKey --instance-type m5.xlarge --instance-count 3 --use-default-roles
-
-list_emr_clusters:
-    aws --endpoint-url=http://localhost:4566 emr list-clusters
