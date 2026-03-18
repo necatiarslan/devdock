@@ -1,0 +1,611 @@
+{
+  "name": "devdock",
+  "displayName": "DevDock",
+  "description": "Your complete AWS toolkit, right in VS Code",
+  "version": "1.0.0",
+  "publisher": "NecatiARSLAN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/necatiarslan/devdock"
+  },
+  "icon": "media/devdock-logo-extension.png",
+  "engines": {
+    "vscode": "^1.106.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "AWS",
+    "S3",
+    "Lambda",
+    "Step Functions",
+    "DynamoDB",
+    "IAM",
+    "CloudWatch",
+    "SNS",
+    "SQS"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "DevDock.Add",
+        "title": "Add",
+        "icon": "$(add)"
+      },
+      {
+        "command": "DevDock.Remove",
+        "title": "Remove",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "DevDock.Refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "DevDock.Filter",
+        "title": "Filter",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "DevDock.ShowOnlyFavorite",
+        "title": "Show Only Favorite",
+        "icon": "$(bookmark)"
+      },
+      {
+        "command": "DevDock.ShowHidden",
+        "title": "Show Hidden",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "DevDock.Hide",
+        "title": "Hide"
+      },
+      {
+        "command": "DevDock.UnHide",
+        "title": "UnHide"
+      },
+      {
+        "command": "DevDock.AddFav",
+        "title": "Fav",
+        "icon": "$(star)"
+      },
+      {
+        "command": "DevDock.RemoveFav",
+        "title": "UnFav",
+        "icon": "$(star-empty)"
+      },
+      {
+        "command": "DevDock.ShowOnlyInThisProfile",
+        "title": "Show Only In This Profile"
+      },
+      {
+        "command": "DevDock.ShowInAnyProfile",
+        "title": "Show In Any Profile"
+      },
+      {
+        "command": "DevDock.ShowOnlyInThisWorkspace",
+        "title": "Show Only In This Workspace"
+      },
+      {
+        "command": "DevDock.ShowInAnyWorkspace",
+        "title": "Show In Any Workspace"
+      },
+      {
+        "command": "DevDock.NodeAdd",
+        "title": "Add",
+        "icon": "$(add)"
+      },
+      {
+        "command": "DevDock.NodeRemove",
+        "title": "Remove",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "DevDock.NodeRefresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "DevDock.NodeView",
+        "title": "View",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "DevDock.NodeEdit",
+        "title": "Edit",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "DevDock.NodeRun",
+        "title": "Run",
+        "icon": "$(play)"
+      },
+      {
+        "command": "DevDock.NodeStop",
+        "title": "Stop",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "DevDock.NodeOpen",
+        "title": "Open",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "DevDock.NodeInfo",
+        "title": "Info",
+        "icon": "$(info)"
+      },
+      {
+        "command": "DevDock.NodeCopy",
+        "title": "Copy",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "DevDock.NodeAlias",
+        "title": "Alias",
+        "icon": "$(case-sensitive)"
+      },
+      {
+        "command": "DevDock.SetTooltip",
+        "title": "Set Tooltip",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "DevDock.MoveUp",
+        "title": "Move Up",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "DevDock.MoveDown",
+        "title": "Move Down",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "DevDock.MoveToFolder",
+        "title": "Move to Folder",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "DevDock.SelectAwsProfile",
+        "title": "Select AWS Profile",
+        "icon": "$(account)"
+      },
+      {
+        "command": "DevDock.SetAwsRegion",
+        "title": "Set AWS Region",
+        "icon": "$(location)"
+      },
+      {
+        "command": "DevDock.UpdateAwsEndPoint",
+        "title": "Update AWS EndPoint"
+      },
+      {
+        "command": "DevDock.TestAwsConnection",
+        "title": "Test AWS Connection",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "DevDock.RefreshCredentials",
+        "title": "Refresh AWS Credentials",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "DevDock.Donate",
+        "title": "Donate",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "DevDock.BugAndNewFeatureRequest",
+        "title": "Bug and New Feature Request",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "DevDock.ExportConfig",
+        "title": "Export Config",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "DevDock.ImportConfig",
+        "title": "Import Config",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "DevDock.ActivatePro",
+        "title": "Activate Pro"
+      },
+      {
+        "command": "DevDock.EnterLicenseKey",
+        "title": "Enter License Key"
+      },
+      {
+        "command": "DevDock.ResetLicenseKey",
+        "title": "Reset License Key"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "DevDock.Connection",
+        "label": "Connection"
+      },
+      {
+        "id": "DevDock.ProLicense",
+        "label": "Pro License"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "DevDock.Add",
+          "when": "view == DevDockView",
+          "group": "navigation"
+        },
+        {
+          "command": "DevDock.Filter",
+          "when": "view == DevDockView",
+          "group": "navigation"
+        },
+        {
+          "command": "DevDock.ShowOnlyFavorite",
+          "when": "view == DevDockView",
+          "group": "navigation"
+        },
+        {
+          "command": "DevDock.ShowHidden",
+          "when": "view == DevDockView",
+          "group": "navigation"
+        },
+        {
+          "command": "DevDock.SelectAwsProfile",
+          "when": "view == DevDockView",
+          "group": "navigation"
+        },
+        {
+          "command": "DevDock.Refresh",
+          "when": "view == DevDockView",
+          "group": "navigation"
+        },
+        {
+          "submenu": "DevDock.Connection",
+          "when": "view == DevDockView",
+          "group": "other_1"
+        },
+        {
+          "submenu": "DevDock.ProLicense",
+          "when": "view == DevDockView",
+          "group": "other_2"
+        },
+        {
+          "command": "DevDock.Donate",
+          "when": "view == DevDockView",
+          "group": "other_3"
+        },
+        {
+          "command": "DevDock.BugAndNewFeatureRequest",
+          "when": "view == DevDockView",
+          "group": "other_3"
+        },
+        {
+          "command": "DevDock.ExportConfig",
+          "when": "view == DevDockView",
+          "group": "other_4"
+        },
+        {
+          "command": "DevDock.ImportConfig",
+          "when": "view == DevDockView",
+          "group": "other_4"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "DevDock.AddFav",
+          "when": "view == DevDockView && viewItem =~ /#AddFav#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.RemoveFav",
+          "when": "view == DevDockView && viewItem =~ /#RemoveFav#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.Hide",
+          "when": "view == DevDockView && viewItem =~ /#Hide#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.UnHide",
+          "when": "view == DevDockView && viewItem =~ /#UnHide#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.ShowOnlyInThisProfile",
+          "when": "view == DevDockView && viewItem =~ /#ShowOnlyInThisProfile#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.ShowInAnyProfile",
+          "when": "view == DevDockView && viewItem =~ /#ShowInAnyProfile#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.ShowOnlyInThisWorkspace",
+          "when": "view == DevDockView && viewItem =~ /#ShowOnlyInThisWorkspace#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.ShowInAnyWorkspace",
+          "when": "view == DevDockView && viewItem =~ /#ShowInAnyWorkspace#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.ShowInAnyProfile",
+          "when": "view == DevDockView && viewItem =~ /#ShowInAnyProfile#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.NodeAlias",
+          "when": "view == DevDockView && viewItem =~ /#NodeAlias#/",
+          "group": "Filter"
+        },
+        {
+          "command": "DevDock.SetTooltip",
+          "when": "view == DevDockView && viewItem =~ /#SetTooltip#/",
+          "group": "Customize"
+        },
+        {
+          "command": "DevDock.MoveUp",
+          "when": "view == DevDockView && viewItem =~ /#MoveUp#/",
+          "group": "Order"
+        },
+        {
+          "command": "DevDock.MoveDown",
+          "when": "view == DevDockView && viewItem =~ /#MoveDown#/",
+          "group": "Order"
+        },
+        {
+          "command": "DevDock.MoveToFolder",
+          "when": "view == DevDockView && viewItem =~ /#NodeMove#/",
+          "group": "Order"
+        },
+        {
+          "command": "DevDock.NodeAdd",
+          "when": "view == DevDockView && viewItem =~ /#NodeAdd#/",
+          "group": "inline@1"
+        },
+        {
+          "command": "DevDock.NodeRemove",
+          "when": "view == DevDockView && viewItem =~ /#NodeRemove#/",
+          "group": "inline@2"
+        },
+        {
+          "command": "DevDock.NodeRefresh",
+          "when": "view == DevDockView && viewItem =~ /#NodeRefresh#/",
+          "group": "inline@3"
+        },
+        {
+          "command": "DevDock.NodeView",
+          "when": "view == DevDockView && viewItem =~ /#NodeView#/",
+          "group": "inline@4"
+        },
+        {
+          "command": "DevDock.NodeEdit",
+          "when": "view == DevDockView && viewItem =~ /#NodeEdit#/",
+          "group": "inline@5"
+        },
+        {
+          "command": "DevDock.NodeRun",
+          "when": "view == DevDockView && viewItem =~ /#NodeRun#/",
+          "group": "inline@6"
+        },
+        {
+          "command": "DevDock.NodeStop",
+          "when": "view == DevDockView && viewItem =~ /#NodeStop#/",
+          "group": "inline@7"
+        },
+        {
+          "command": "DevDock.NodeOpen",
+          "when": "view == DevDockView && viewItem =~ /#NodeOpen#/",
+          "group": "inline@8"
+        },
+        {
+          "command": "DevDock.NodeInfo",
+          "when": "view == DevDockView && viewItem =~ /#NodeInfo#/",
+          "group": "inline@9"
+        },
+        {
+          "command": "DevDock.NodeCopy",
+          "when": "view == DevDockView && viewItem =~ /#NodeCopy#/",
+          "group": "inline@10"
+        }
+      ],
+      "DevDock.Connection": [
+        {
+          "command": "DevDock.TestAwsConnection",
+          "group": "1_connection"
+        },
+        {
+          "command": "DevDock.RefreshCredentials",
+          "group": "1_connection"
+        },
+        {
+          "command": "DevDock.UpdateAwsEndPoint",
+          "group": "2_settings"
+        },
+        {
+          "command": "DevDock.SetAwsRegion",
+          "group": "2_settings"
+        }
+      ],
+      "DevDock.ProLicense": [
+        {
+          "command": "DevDock.EnterLicenseKey",
+          "group": "1_license"
+        },
+        {
+          "command": "DevDock.ResetLicenseKey",
+          "group": "1_license"
+        },
+        {
+          "command": "DevDock.ActivatePro",
+          "group": "1_license"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "DevDock",
+          "title": "Aws Workbench",
+          "icon": "media/aws-workbench-logo-activitybar.svg"
+        }
+      ]
+    },
+    "views": {
+      "DevDock": [
+        {
+          "id": "DevDockView",
+          "name": "Aws Workbench",
+          "icon": "media/aws-workbench-logo-activitybar.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "DevDockView",
+        "contents": "Please click [+] to add Aws Resources. \n [Add](command:DevDock.Add) \n\n\n\n To Access Aws, you need to configure local Aws Credentials. \n For more detail on Aws Credentials, see the [AWS CLI Credentials Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). \n For a video guide, see this [YouTube Tutorial on AWS Credentials](https://www.youtube.com/watch?v=SON8sY1iOBU). \n\n [Test Aws Connection](command:DevDock.TestAwsConnection) \n\n [Update Aws EndPoint](command:DevDock.UpdateAwsEndPoint)"
+      }
+    ],
+    "icons": {
+      "s3-bucket": {
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1db"
+        }
+      },
+      "cloudwatch-loggroup": {
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1c4"
+        }
+      },
+      "cloudwatch-logstream": {
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\eb85"
+        }
+      },
+      "lambda-function": {
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1d1"
+        }
+      },
+      "step-functions": {
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1e1"
+        }
+      },
+      "glue-job": {
+        "description": "AWS Glue Job Icon",
+        "default": {
+          "fontPath": "./node_modules/@vscode/codicons/dist/codicon.ttf",
+          "fontCharacter": "\\eb8e"
+        }
+      },
+      "dynamodb-table": {
+        "description": "AWS DynamoDB Table Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1cc"
+        }
+      },
+      "sqs-queue": {
+        "description": "AWS SQS Queue Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\eb9c"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/archiver": "^7.0.0",
+    "@types/glob": "^9.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^25.5.0",
+    "@types/tmp": "^0.2.6",
+    "@types/vscode": "^1.106.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^10.0.3",
+    "glob": "^13.0.6",
+    "mocha": "^11.7.5",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.1009.0",
+    "@aws-sdk/client-dynamodb": "^3.1009.0",
+    "@aws-sdk/client-emr": "^3.1009.0",
+    "@aws-sdk/client-emr-serverless": "^3.1009.0",
+    "@aws-sdk/client-glue": "^3.1009.0",
+    "@aws-sdk/client-iam": "^3.1009.0",
+    "@aws-sdk/client-lambda": "^3.1009.0",
+    "@aws-sdk/client-s3": "^3.1009.0",
+    "@aws-sdk/client-sfn": "^3.1009.0",
+    "@aws-sdk/client-sns": "^3.1009.0",
+    "@aws-sdk/client-sqs": "^3.1009.0",
+    "@aws-sdk/client-sts": "^3.1009.0",
+    "@aws-sdk/credential-provider-ini": "^3.972.20",
+    "@aws-sdk/credential-provider-node": "^3.972.21",
+    "@aws-sdk/credential-providers": "^3.1009.0",
+    "@aws-sdk/types": "^3.973.6",
+    "@tshepomgaga/aws-sfn-graph": "^0.0.6",
+    "@types/uuid": "^11.0.0",
+    "@vscode-elements/elements": "^2.5.1",
+    "@vscode/codicons": "^0.0.45",
+    "archiver": "^7.0.1",
+    "js-tiktoken": "^1.0.21",
+    "js-yaml": "^4.1.1",
+    "reflect-metadata": "^0.2.2",
+    "tmp": "^0.2.5",
+    "uuid": "^13.0.0",
+    "yauzl": "^3.2.1"
+  },
+  "overrides": {
+    "archiver": {
+      "readdir-glob": "3.0.0"
+    },
+    "archiver-utils": {
+      "glob": {
+        "minimatch": "9.0.9"
+      }
+    },
+    "mocha": {
+      "diff": "8.0.3",
+      "glob": {
+        "minimatch": "9.0.9"
+      },
+      "minimatch": "9.0.9",
+      "serialize-javascript": "7.0.4"
+    }
+  }
+}
