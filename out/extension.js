@@ -7,7 +7,6 @@ const Session_1 = require("./common/Session");
 const TreeView_1 = require("./tree/TreeView");
 const ServiceHub_1 = require("./tree/ServiceHub");
 const TreeState_1 = require("./tree/TreeState");
-const License_1 = require("./common/License");
 /**
  * Activates the DevDock extension.
  * This is the entry point for the extension.
@@ -15,9 +14,7 @@ const License_1 = require("./common/License");
 function activate(context) {
     ui.logToOutput('Activating DevDock...');
     try {
-        (0, License_1.initializeLicense)(context);
         const session = new Session_1.Session(context); // Initialize session management
-        session.IsProVersion = (0, License_1.isLicenseValid)();
         new ServiceHub_1.ServiceHub(context); // Initialize service hub
         // 1. Initialize the unified DevDock tree provider
         new TreeView_1.TreeView(context);
@@ -25,8 +22,6 @@ function activate(context) {
         TreeState_1.TreeState.load();
         // 3. Refresh tree to display loaded nodes
         TreeView_1.TreeView.Current.Refresh();
-        // 4. Register commands after TreeView is ready
-        (0, License_1.RegisterLicenseManagementCommands)();
         ui.logToOutput('DevDock activated successfully.');
     }
     catch (error) {

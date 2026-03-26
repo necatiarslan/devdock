@@ -8,8 +8,6 @@ import * as ui from "../common/UI";
 
 export class TreeView {
 
-    private static readonly FREE_NODE_LIMIT = 5;
-
     public static Current: TreeView;
 	public view: vscode.TreeView<NodeBase>;
 	public treeDataProvider: TreeProvider;
@@ -164,43 +162,6 @@ export class TreeView {
 		}
 	}
 
-    private IsUnrestrictedFreeNodeType(nodeType: string): boolean {
-        return nodeType === "Folder" || nodeType === "Note";
-    }
-
-    private CountRestrictedNodes(nodes: NodeBase[]): number {
-        let count = 0;
-
-        for (const currentNode of nodes) {
-            const nodeType = currentNode.constructor.name;
-            if (nodeType !== "FolderNode" && nodeType !== "NoteNode") {
-                count++;
-            }
-
-            if (currentNode.Children.length > 0) {
-                count += this.CountRestrictedNodes(currentNode.Children);
-            }
-        }
-
-        return count;
-    }
-
-    private CanAddNodeType(nodeType: string): boolean {
-        if (Session.Current.IsProVersion || this.IsUnrestrictedFreeNodeType(nodeType)) {
-            return true;
-        }
-
-        const restrictedNodeCount = this.CountRestrictedNodes(NodeBase.RootNodes);
-        if (restrictedNodeCount >= TreeView.FREE_NODE_LIMIT) {
-            ui.showWarningMessage("Free version can add up to 5 nodes. Upgrade to Pro version to add unlimited nodes.");
-            // call DevDock.ProUpgrade() to show upgrade prompt
-            vscode.commands.executeCommand('DevDock.ActivatePro');
-            return false;
-        }
-
-        return true;
-    }
-
     public async Remove(node: NodeBase): Promise<void> {
         if(!node){ return; }
 
@@ -219,7 +180,6 @@ export class TreeView {
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
         if(!nodeType){ return; }
-        if(!this.CanAddNodeType(nodeType)){ return; }
 
         switch (nodeType) {
             case "Folder":

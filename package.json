@@ -177,24 +177,6 @@
         "command": "DevDock.ImportConfig",
         "title": "Import Config",
         "icon": "$(arrow-up)"
-      },
-      {
-        "command": "DevDock.ActivatePro",
-        "title": "Activate Pro"
-      },
-      {
-        "command": "DevDock.EnterLicenseKey",
-        "title": "Enter License Key"
-      },
-      {
-        "command": "DevDock.ResetLicenseKey",
-        "title": "Reset License Key"
-      }
-    ],
-    "submenus": [
-      {
-        "id": "DevDock.ProLicense",
-        "label": "Pro License"
       }
     ],
     "menus": {
@@ -223,11 +205,6 @@
           "command": "DevDock.Refresh",
           "when": "view == DevDockView",
           "group": "navigation"
-        },
-        {
-          "submenu": "DevDock.ProLicense",
-          "when": "view == DevDockView",
-          "group": "other_1"
         },
         {
           "command": "DevDock.Donate",
@@ -355,20 +332,6 @@
           "command": "DevDock.NodeCopy",
           "when": "view == DevDockView && viewItem =~ /#NodeCopy#/",
           "group": "inline@10"
-        }
-      ],
-      "DevDock.ProLicense": [
-        {
-          "command": "DevDock.EnterLicenseKey",
-          "group": "1_license"
-        },
-        {
-          "command": "DevDock.ResetLicenseKey",
-          "group": "1_license"
-        },
-        {
-          "command": "DevDock.ActivatePro",
-          "group": "1_license"
         }
       ]
     },

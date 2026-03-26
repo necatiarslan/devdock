@@ -17,7 +17,6 @@ export class Session implements vscode.Disposable {
     public IsShowOnlyFavorite: boolean = false;
     public IsShowHiddenNodes: boolean = false;
     public HostAppName: string = '';
-    public IsProVersion: boolean = false;
 
     public constructor(context: vscode.ExtensionContext) {
         Session.Current = this;

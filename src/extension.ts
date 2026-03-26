@@ -4,7 +4,6 @@ import { Session } from './common/Session';
 import { TreeView } from './tree/TreeView';
 import { ServiceHub } from './tree/ServiceHub';
 import { TreeState } from './tree/TreeState';
-import { initializeLicense, isLicenseValid, RegisterLicenseManagementCommands } from "./common/License";
 
 
 /**
@@ -15,9 +14,7 @@ export function activate(context: vscode.ExtensionContext): void {
     ui.logToOutput('Activating DevDock...');
 
     try {
-        initializeLicense(context);
         const session = new Session(context); // Initialize session management
-        session.IsProVersion = isLicenseValid();
         new ServiceHub(context);    // Initialize service hub
         
 		// 1. Initialize the unified DevDock tree provider
@@ -28,10 +25,6 @@ export function activate(context: vscode.ExtensionContext): void {
         
         // 3. Refresh tree to display loaded nodes
         TreeView.Current.Refresh();
-
-		// 4. Register commands after TreeView is ready
-		RegisterLicenseManagementCommands();
-		
 
         ui.logToOutput('DevDock activated successfully.');
     } catch (error) {

@@ -11,7 +11,6 @@ class Session {
     IsShowOnlyFavorite = false;
     IsShowHiddenNodes = false;
     HostAppName = '';
-    IsProVersion = false;
     constructor(context) {
         Session.Current = this;
         this.Context = context;
