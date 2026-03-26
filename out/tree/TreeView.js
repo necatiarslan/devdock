@@ -143,6 +143,7 @@ class TreeView {
         result.push("Bash Script");
         result.push("Bash File");
         result.push("VS Code Command");
+        result.push("Web Link");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
             return;
@@ -165,6 +166,9 @@ class TreeView {
                 break;
             case "VS Code Command":
                 await ServiceHub_1.ServiceHub.Current.VscodeService.Add(node, "Command");
+                break;
+            case "Web Link":
+                await ServiceHub_1.ServiceHub.Current.WebService.Add(node, "Web Link");
                 break;
         }
         TreeState_1.TreeState.save();
