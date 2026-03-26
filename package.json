@@ -1,6 +1,6 @@
 {
-  "name": "devdock",
-  "displayName": "DevDock",
+  "name": "dev-dock",
+  "displayName": "Dev-Dock",
   "description": "A customizable developer dock for files, notes, scripts, and VS Code commands",
   "version": "1.0.0",
   "publisher": "NecatiARSLAN",
@@ -376,10 +376,10 @@
     "@types/node": "^25.5.0",
     "@types/tmp": "^0.2.6",
     "@types/vscode": "^1.106.0",
-    "@typescript-eslint/eslint-plugin": "^8.57.0",
-    "@typescript-eslint/parser": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.2",
+    "@typescript-eslint/parser": "^8.57.2",
     "@vscode/test-electron": "^2.5.2",
-    "eslint": "^10.0.3",
+    "eslint": "^10.1.0",
     "glob": "^13.0.6",
     "mocha": "^11.7.5",
     "typescript": "^5.9.3"
