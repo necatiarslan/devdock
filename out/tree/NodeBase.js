@@ -66,6 +66,32 @@ class NodeBase extends vscode.TreeItem {
     _customTooltip;
     IsVisible = true;
     IsWorking = false;
+    getIconColor() {
+        switch (this.constructor.name) {
+            case 'FolderNode':
+                return new vscode.ThemeColor('terminal.ansiYellow');
+            case 'NoteNode':
+                return new vscode.ThemeColor('charts.blue');
+            case 'FileNode':
+                return new vscode.ThemeColor('symbolIcon.fileForeground');
+            case 'BashScriptNode':
+                return new vscode.ThemeColor('terminal.ansiGreen');
+            case 'BashFileNode':
+                return new vscode.ThemeColor('terminal.ansiGreen');
+            case 'CommandNode':
+                return new vscode.ThemeColor('terminal.ansiCyan');
+            case 'WebLinkNode':
+                return new vscode.ThemeColor('textLink.foreground');
+            default:
+                return undefined;
+        }
+    }
+    updateIconPath() {
+        if (!this._icon) {
+            return;
+        }
+        this.iconPath = new vscode.ThemeIcon(this._icon, this.getIconColor());
+    }
     StartWorking() {
         this.IsWorking = true;
         this.iconPath = new vscode.ThemeIcon("loading~spin");
@@ -73,7 +99,7 @@ class NodeBase extends vscode.TreeItem {
     }
     StopWorking() {
         this.IsWorking = false;
-        this.iconPath = new vscode.ThemeIcon(this._icon);
+        this.updateIconPath();
         this.RefreshTree();
     }
     get IsSerializable() {
@@ -235,7 +261,7 @@ class NodeBase extends vscode.TreeItem {
     }
     set Icon(value) {
         this._icon = value;
-        this.iconPath = new vscode.ThemeIcon(this._icon);
+        this.updateIconPath();
     }
     Remove() {
         if (this.Parent) {
@@ -330,7 +356,7 @@ class NodeBase extends vscode.TreeItem {
         }
         // Restore icon path from saved icon name
         if (this._icon) {
-            this.iconPath = new vscode.ThemeIcon(this._icon);
+            this.updateIconPath();
         }
         this.SetContextValue();
         this.SetVisible();

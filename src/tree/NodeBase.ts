@@ -78,6 +78,34 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public IsWorking: boolean = false;
 
+    private getIconColor(): vscode.ThemeColor | undefined {
+        switch (this.constructor.name) {
+            case 'FolderNode':
+                return new vscode.ThemeColor('terminal.ansiYellow');
+            case 'NoteNode':
+                return new vscode.ThemeColor('charts.blue');
+            case 'FileNode':
+                return new vscode.ThemeColor('symbolIcon.fileForeground');
+            case 'BashScriptNode':
+                return new vscode.ThemeColor('terminal.ansiGreen');
+            case 'BashFileNode':
+                return new vscode.ThemeColor('terminal.ansiGreen');
+            case 'CommandNode':
+                return new vscode.ThemeColor('terminal.ansiCyan');
+            case 'WebLinkNode':
+                return new vscode.ThemeColor('textLink.foreground');
+            default:
+                return undefined;
+        }
+    }
+
+    private updateIconPath(): void {
+        if (!this._icon) {
+            return;
+        }
+        this.iconPath = new vscode.ThemeIcon(this._icon, this.getIconColor());
+    }
+
     public StartWorking(): void {
         this.IsWorking = true;  
         this.iconPath = new vscode.ThemeIcon("loading~spin");
@@ -86,7 +114,7 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public StopWorking(): void {
         this.IsWorking = false;
-        this.iconPath = new vscode.ThemeIcon(this._icon);
+        this.updateIconPath();
         this.RefreshTree()
     }
 
@@ -236,7 +264,7 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public set Icon(value: string) {
         this._icon = value;
-        this.iconPath = new vscode.ThemeIcon(this._icon);
+        this.updateIconPath();
     }
 
     public Remove(): void {
@@ -338,7 +366,7 @@ export abstract class NodeBase extends vscode.TreeItem {
 
         // Restore icon path from saved icon name
         if (this._icon) {
-            this.iconPath = new vscode.ThemeIcon(this._icon);
+            this.updateIconPath();
         }
 
         this.SetContextValue();
