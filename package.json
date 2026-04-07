@@ -2,7 +2,7 @@
   "name": "dev-dock",
   "displayName": "Dev-Dock",
   "description": "A customizable developer dock for files, notes, scripts, and VS Code commands",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "NecatiARSLAN",
   "repository": {
     "type": "git",
