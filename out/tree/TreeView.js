@@ -88,6 +88,9 @@ class TreeView {
         vscode.commands.registerCommand('DevDock.SetTooltip', (node) => {
             this.SetTooltip(node);
         });
+        vscode.commands.registerCommand('DevDock.SetColor', (node) => {
+            this.SetColor(node);
+        });
         vscode.commands.registerCommand('DevDock.MoveUp', (node) => {
             this.MoveUp(node);
         });
@@ -280,6 +283,9 @@ class TreeView {
     }
     SetTooltip(node) {
         node.SetCustomTooltip();
+    }
+    SetColor(node) {
+        node.SetIconColor();
     }
     MoveUp(node) {
         node.MoveUp();

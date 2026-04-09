@@ -64,9 +64,13 @@ class NodeBase extends vscode.TreeItem {
     _workspace = "";
     _alias;
     _customTooltip;
+    _iconColor;
     IsVisible = true;
     IsWorking = false;
     getIconColor() {
+        if (this._iconColor) {
+            return new vscode.ThemeColor(this._iconColor);
+        }
         switch (this.constructor.name) {
             case 'FolderNode':
                 return new vscode.ThemeColor('terminal.ansiYellow');
@@ -216,6 +220,7 @@ class NodeBase extends vscode.TreeItem {
             else {
                 context += "#ShowOnlyInThisWorkspace#";
             }
+            context += "#SetColor#";
             context += "#SetTooltip#";
             context += "#MoveUp#";
             context += "#MoveDown#";
@@ -338,6 +343,29 @@ class NodeBase extends vscode.TreeItem {
         this.RefreshTree();
         this.TreeSave();
     }
+    async SetIconColor() {
+        const colors = [
+            { label: '$(circle-outline) Default', token: undefined },
+            { label: '$(symbol-color) Blue', token: 'charts.blue' },
+            { label: '$(symbol-color) Green', token: 'charts.green' },
+            { label: '$(symbol-color) Orange', token: 'charts.orange' },
+            { label: '$(symbol-color) Red', token: 'charts.red' },
+            { label: '$(symbol-color) Purple', token: 'charts.purple' },
+            { label: '$(symbol-color) Yellow', token: 'charts.yellow' },
+            { label: '$(symbol-color) Gray', token: 'charts.gray' },
+        ];
+        const selected = await vscode.window.showQuickPick(colors, {
+            placeHolder: 'Select color',
+            canPickMany: false,
+        });
+        if (!selected) {
+            return;
+        }
+        this._iconColor = selected.token;
+        this.updateIconPath();
+        this.RefreshTree();
+        this.TreeSave();
+    }
     /**
      * Finalize node after deserialization.
      * Sets up visual state and adds root nodes to RootNodes array.
@@ -455,4 +483,8 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], NodeBase.prototype, "_customTooltip", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], NodeBase.prototype, "_iconColor", void 0);
 //# sourceMappingURL=NodeBase.js.map

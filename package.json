@@ -2,7 +2,7 @@
   "name": "dev-dock",
   "displayName": "Dev-Dock",
   "description": "A customizable developer dock for files, notes, scripts, and VS Code commands",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "NecatiARSLAN",
   "repository": {
     "type": "git",
@@ -144,6 +144,11 @@
         "icon": "$(comment)"
       },
       {
+        "command": "DevDock.SetColor",
+        "title": "Set Color",
+        "icon": "$(symbol-color)"
+      },
+      {
         "command": "DevDock.MoveUp",
         "title": "Move Up",
         "icon": "$(arrow-up)"
@@ -266,6 +271,11 @@
         {
           "command": "DevDock.SetTooltip",
           "when": "view == DevDockView && viewItem =~ /#SetTooltip#/",
+          "group": "Customize"
+        },
+        {
+          "command": "DevDock.SetColor",
+          "when": "view == DevDockView && viewItem =~ /#SetColor#/",
           "group": "Customize"
         },
         {

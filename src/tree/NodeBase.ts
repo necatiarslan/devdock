@@ -74,11 +74,18 @@ export abstract class NodeBase extends vscode.TreeItem {
     @Serialize()
     private _customTooltip?: string;
 
+    @Serialize()
+    private _iconColor?: string;
+
     public IsVisible: boolean = true;
 
     public IsWorking: boolean = false;
 
     private getIconColor(): vscode.ThemeColor | undefined {
+        if (this._iconColor) {
+            return new vscode.ThemeColor(this._iconColor);
+        }
+
         switch (this.constructor.name) {
             case 'FolderNode':
                 return new vscode.ThemeColor('terminal.ansiYellow');
@@ -211,6 +218,7 @@ export abstract class NodeBase extends vscode.TreeItem {
             if (this.Workspace.length > 0) { context += "#ShowInAnyWorkspace#"; }
             else { context += "#ShowOnlyInThisWorkspace#"; }
 
+            context += "#SetColor#";
             context += "#SetTooltip#";
             context += "#MoveUp#";
             context += "#MoveDown#";
@@ -343,6 +351,31 @@ export abstract class NodeBase extends vscode.TreeItem {
         
         this.CustomTooltip = tooltip.trim() || undefined;
         this.RefreshTree()
+        this.TreeSave();
+    }
+
+    public async SetIconColor(): Promise<void> {
+        const colors = [
+            { label: '$(circle-outline) Default', token: undefined as string | undefined },
+            { label: '$(symbol-color) Blue', token: 'charts.blue' },
+            { label: '$(symbol-color) Green', token: 'charts.green' },
+            { label: '$(symbol-color) Orange', token: 'charts.orange' },
+            { label: '$(symbol-color) Red', token: 'charts.red' },
+            { label: '$(symbol-color) Purple', token: 'charts.purple' },
+            { label: '$(symbol-color) Yellow', token: 'charts.yellow' },
+            { label: '$(symbol-color) Gray', token: 'charts.gray' },
+        ];
+
+        const selected = await vscode.window.showQuickPick(colors, {
+            placeHolder: 'Select color',
+            canPickMany: false,
+        });
+
+        if (!selected) { return; }
+
+        this._iconColor = selected.token;
+        this.updateIconPath();
+        this.RefreshTree();
         this.TreeSave();
     }
 
